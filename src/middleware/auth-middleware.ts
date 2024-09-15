@@ -18,6 +18,8 @@ const auth = async (req, res, next) => {
       id: payload.userId,
     };
   } catch (error) {
-    throw new UnauthenticatedError("Authentication invalid")
+    throw new UnauthenticatedError('Authentication invalid');
   }
 };
+
+module.exports = auth;
