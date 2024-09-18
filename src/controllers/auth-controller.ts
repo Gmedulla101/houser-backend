@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 import { StatusCodes } from 'http-status-codes';
 
 const userModel = require('../models/User-model');
@@ -13,30 +13,44 @@ type UserDetails = {
 
 const register = async (req, res) => {
   const { email, password, username }: UserDetails = req.body;
-  if (!email || !password || !username) {
-    throw new BadRequestError('Please enter complete sign up details');
-  }
-
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
 
   try {
-    const user = await userModel.create({
+    if (!email || !password || !username) {
+      throw new BadRequestError('Please enter complete sign up details');
+    }
+
+    const takenUsername = await userModel.findOne({ username });
+    if (takenUsername) {
+      throw new BadRequestError('Username has been taken');
+    }
+
+    const prevUser = await userModel.findOne({ email });
+    if (prevUser) {
+      throw new BadRequestError('User already exists!');
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const newUser = await userModel.create({
       email,
       password: hashedPassword,
       username,
     });
 
     const token = jwt.sign(
-      { userId: user._id, username: user.username },
+      { userId: newUser._id, username: newUser.username },
       process.env.JWT_SECRET
     );
 
     res
       .status(StatusCodes.OK)
-      .json({ success: true, username: user.username, token });
+      .json({ success: true, username: newUser.username, token });
   } catch (error) {
-    throw new BadRequestError('Authentication discontinued please try again');
+    res.status(StatusCodes.BAD_REQUEST).json({
+      success: false,
+      msg: error.message,
+    });
   }
 };
 
