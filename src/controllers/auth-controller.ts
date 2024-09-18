@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 import { StatusCodes } from 'http-status-codes';
 
 const userModel = require('../models/User-model');
-const { BadRequestError } = require('../errors');
+const { BadRequestError, UnauthenticatedError } = require('../errors');
 
 type UserDetails = {
   username: string;
@@ -55,7 +55,36 @@ const register = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  res.send('User has loged in');
+  const { email, password } = req.body;
+
+  try {
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      throw new BadRequestError("User doesn't exist!");
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    const isPasswordCorrect = await bcrypt.compare(password, hashedPassword);
+
+    if (!isPasswordCorrect) {
+      throw new UnauthenticatedError('Password is not correct');
+    }
+
+    const token = jwt.sign(
+      { userId: user._id, username: user.username },
+      process.env.JWT_SECRET
+    );
+
+    res
+      .status(StatusCodes.OK)
+      .json({ success: true, username: user.username, token });
+  } catch (error) {
+    res.status(StatusCodes.BAD_REQUEST).json({
+      success: false,
+      msg: error.message,
+    });
+  }
 };
 
 module.exports = {
