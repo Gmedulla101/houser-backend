@@ -1,9 +1,9 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 import { StatusCodes } from 'http-status-codes';
 
-const userModel = require('../models/User-model');
-const { BadRequestError, UnauthenticatedError } = require('../errors');
+import userModel from '../models/User-model';
+import { BadRequestError, UnauthenticatedError } from '../errors';
 
 type UserDetails = {
   username: string;

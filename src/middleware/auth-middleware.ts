@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
-const jwt = require('jsonwebtoken');
-const { UnauthenticatedError } = require('../errors');
+import jwt from 'jsonwebtoken';
+import { UnauthenticatedError } from '../errors';
 
 const auth = async (req, res, next) => {
   const authHeader = req.body;

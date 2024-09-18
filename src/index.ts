@@ -3,10 +3,10 @@ import express, { urlencoded } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 
-const propertiesRouter = require('./routes/properties-route');
-const authRouter = require('./routes/auth-route');
-const connectDB = require('./db/connectDB');
-const notFound = require('./middleware/not-found');
+import propertiesRouter from './routes/properties-route';
+import authRouter from './routes/auth-route';
+import connectDB from './db/connectDB';
+import notFound from './middleware/not-found';
 
 const app = express();
 dotenv.config();

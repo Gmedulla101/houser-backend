@@ -22,4 +22,7 @@ const UserSchema = new mongoose.Schema({
     required: [true, 'Please enter our password'],
   },
 });
-module.exports = mongoose.model('user', UserSchema);
+
+const userModel = mongoose.model('user', UserSchema);
+
+export default userModel;

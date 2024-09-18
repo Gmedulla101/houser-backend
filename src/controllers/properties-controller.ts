@@ -14,10 +14,4 @@ const updateProp = (req, res) => {
   res.send('Updating property');
 };
 
-module.exports = {
-  getAllProps,
-  getProp,
-  createProp,
-  updateProp,
-  deleteProp,
-};
+export { getAllProps, getProp, createProp, updateProp, deleteProp };

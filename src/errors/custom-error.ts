@@ -1,4 +1,4 @@
-class CustomApiError extends Error {
+export default class CustomApiError extends Error {
   constructor(message) {
     super(message);
   }
