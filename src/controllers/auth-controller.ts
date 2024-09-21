@@ -40,7 +40,8 @@ const register = async (req, res) => {
 
     const token = jwt.sign(
       { userId: newUser._id, username: newUser.username },
-      process.env.JWT_SECRET
+      process.env.JWT_SECRET,
+      { expiresIn: '30d' }
     );
 
     res
@@ -56,6 +57,9 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password) {
+    throw new BadRequestError('Please enter complete login details');
+  }
 
   try {
     const user = await userModel.findOne({ email });
@@ -63,9 +67,7 @@ const login = async (req, res) => {
       throw new BadRequestError("User doesn't exist!");
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    const isPasswordCorrect = await bcrypt.compare(password, hashedPassword);
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
     if (!isPasswordCorrect) {
       throw new UnauthenticatedError('Password is not correct');
@@ -73,7 +75,8 @@ const login = async (req, res) => {
 
     const token = jwt.sign(
       { userId: user._id, username: user.username },
-      process.env.JWT_SECRET
+      process.env.JWT_SECRET,
+      { expiresIn: '30d' }
     );
 
     res

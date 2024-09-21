@@ -7,6 +7,7 @@ import propertiesRouter from './routes/properties-route';
 import authRouter from './routes/auth-route';
 import connectDB from './db/connectDB';
 import notFound from './middleware/not-found';
+/* import errorHandlerMiddleware from './middleware/error-handler'; */
 
 const app = express();
 dotenv.config();
@@ -14,6 +15,13 @@ dotenv.config();
 //NEEDED DEFAULT MIDDLEWARE
 app.use(express.json());
 app.use(urlencoded({ extended: false }));
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    methods: 'GET,POST,DELETE,PATCH,PUT',
+    credentials: true,
+  })
+);
 
 //SETTING UP ROUTERs
 app.use('/api/v1/properties', propertiesRouter);
