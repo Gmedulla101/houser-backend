@@ -19,6 +19,7 @@ const register = async (req, res) => {
       throw new BadRequestError('Please enter complete sign up details');
     }
 
+    //CHECKING TO SEE IF THE USERNAME AND EMAIL ALREADY EXIST IN THE DATABASE
     const takenUsername = await userModel.findOne({ username });
     if (takenUsername) {
       throw new BadRequestError('Username has been taken');
@@ -29,6 +30,7 @@ const register = async (req, res) => {
       throw new BadRequestError('User already exists!');
     }
 
+    //HASING THE PASSWORD
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -39,14 +41,17 @@ const register = async (req, res) => {
     });
 
     const token = jwt.sign(
-      { userId: newUser._id, username: newUser.username },
+      { userId: newUser._id, username: newUser.username, email: newUser.email },
       process.env.JWT_SECRET,
       { expiresIn: '30d' }
     );
 
-    res
-      .status(StatusCodes.OK)
-      .json({ success: true, username: newUser.username, token });
+    res.status(StatusCodes.OK).json({
+      success: true,
+      username: newUser.username,
+      email: newUser.email,
+      token,
+    });
   } catch (error) {
     res.status(StatusCodes.BAD_REQUEST).json({
       success: false,
@@ -74,14 +79,17 @@ const login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { userId: user._id, username: user.username },
+      { userId: user._id, username: user.username, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: '30d' }
     );
 
-    res
-      .status(StatusCodes.OK)
-      .json({ success: true, username: user.username, token });
+    res.status(StatusCodes.OK).json({
+      success: true,
+      username: user.username,
+      email: user.email,
+      token,
+    });
   } catch (error) {
     res.status(StatusCodes.BAD_REQUEST).json({
       success: false,

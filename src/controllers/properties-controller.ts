@@ -5,7 +5,7 @@ const getProp = (req, res) => {
   res.send('Getting property');
 };
 const createProp = (req, res) => {
-  res.send('Created property');
+  res.send(req.user);
 };
 const deleteProp = (req, res) => {
   res.send('Deleting property');

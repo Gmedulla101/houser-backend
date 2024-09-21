@@ -1,13 +1,12 @@
-import { StatusCodes } from 'http-status-codes';
 import jwt from 'jsonwebtoken';
 import { UnauthenticatedError } from '../errors';
 
-const auth = async (req, res, next) => {
-  const authHeader = req.body;
+const auth = (req, res, next) => {
+  const authHeader: string = req.headers.authorization;
+
   if (!authHeader || !authHeader.startsWith('Bearer')) {
     throw new UnauthenticatedError('Authentication invalid');
   }
-
   const token = authHeader.split(' ')[1];
 
   try {
@@ -15,11 +14,12 @@ const auth = async (req, res, next) => {
     req.user = {
       username: payload.username,
       email: payload.email,
-      id: payload.userId,
+      userId: payload.userId,
     };
+    next();
   } catch (error) {
     throw new UnauthenticatedError('Authentication invalid');
   }
 };
 
-module.exports = auth;
+export { auth };
