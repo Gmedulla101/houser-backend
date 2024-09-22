@@ -7,7 +7,7 @@ import propertiesRouter from './routes/properties-route';
 import authRouter from './routes/auth-route';
 import connectDB from './db/connectDB';
 import notFound from './middleware/not-found';
-/* import errorHandlerMiddleware from './middleware/error-handler'; */
+import errorHandlerMiddleware from './middleware/error-handler';
 
 const app = express();
 dotenv.config();
@@ -29,6 +29,7 @@ app.use('/api/v1/auth', authRouter);
 
 //ERROR MIDDLEWARE
 app.use(notFound);
+app.use(errorHandlerMiddleware);
 
 const PORT = process.env.PORT || 5000;
 

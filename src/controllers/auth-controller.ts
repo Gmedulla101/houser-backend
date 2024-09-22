@@ -11,10 +11,10 @@ type UserDetails = {
   password?: string;
 };
 
-const register = async (req, res) => {
-  const { email, password, username }: UserDetails = req.body;
-
+const register = async (req, res, next) => {
   try {
+    const { email, password, username }: UserDetails = req.body;
+
     if (!email || !password || !username) {
       throw new BadRequestError('Please enter complete sign up details');
     }
@@ -30,7 +30,7 @@ const register = async (req, res) => {
       throw new BadRequestError('User already exists!');
     }
 
-    //HASING THE PASSWORD
+    //HASHING THE PASSWORD
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -41,7 +41,11 @@ const register = async (req, res) => {
     });
 
     const token = jwt.sign(
-      { userId: newUser._id, username: newUser.username, email: newUser.email },
+      {
+        userId: newUser._id,
+        username: newUser.username,
+        email: newUser.email,
+      },
       process.env.JWT_SECRET,
       { expiresIn: '30d' }
     );
@@ -52,24 +56,21 @@ const register = async (req, res) => {
       email: newUser.email,
       token,
     });
-  } catch (error) {
-    res.status(StatusCodes.BAD_REQUEST).json({
-      success: false,
-      msg: error.message,
-    });
+  } catch (err) {
+    next(err);
   }
 };
 
-const login = async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    throw new BadRequestError('Please enter complete login details');
-  }
-
+const login = async (req, res, next) => {
   try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      throw new BadRequestError('Please enter complete login details');
+    }
+
     const user = await userModel.findOne({ email });
     if (!user) {
-      throw new BadRequestError("User doesn't exist!");
+      throw new UnauthenticatedError("User doesn't exist!");
     }
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
@@ -90,11 +91,8 @@ const login = async (req, res) => {
       email: user.email,
       token,
     });
-  } catch (error) {
-    res.status(StatusCodes.BAD_REQUEST).json({
-      success: false,
-      msg: error.message,
-    });
+  } catch (err) {
+    next(err);
   }
 };
 
