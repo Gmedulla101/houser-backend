@@ -1,8 +1,15 @@
 import propertyModel from '../models/Properties-model';
 import { StatusCodes } from 'http-status-codes';
 
-const getAllProps = (req, res) => {
-  res.send('Getting all properties');
+const getAllProps = async (req, res, next) => {
+  try {
+    const props = await propertyModel.find({});
+    res
+      .status(StatusCodes.OK)
+      .json({ success: true, data: props, nbHits: props.length });
+  } catch (err) {
+    next(err);
+  }
 };
 
 const getProp = (req, res) => {
