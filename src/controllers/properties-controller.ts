@@ -4,9 +4,22 @@ import { StatusCodes } from 'http-status-codes';
 const getAllProps = (req, res) => {
   res.send('Getting all properties');
 };
+
 const getProp = (req, res) => {
   res.send('Getting property');
 };
+
+const getUserProp = async (req, res, next) => {
+  try {
+    const userProps = await propertyModel.find({ createdBy: req.user.userId });
+    res
+      .status(StatusCodes.OK)
+      .json({ success: true, data: userProps, nbHits: userProps.length });
+  } catch (err) {
+    next(err);
+  }
+};
+
 const createProp = async (req, res, next) => {
   req.body.createdBy = req.user.userId;
   try {
@@ -16,11 +29,20 @@ const createProp = async (req, res, next) => {
     next(err);
   }
 };
+
 const deleteProp = (req, res) => {
   res.send('Deleting property');
 };
+
 const updateProp = (req, res) => {
   res.send('Updating property');
 };
 
-export { getAllProps, getProp, createProp, updateProp, deleteProp };
+export {
+  getAllProps,
+  getProp,
+  getUserProp,
+  createProp,
+  updateProp,
+  deleteProp,
+};

@@ -19,6 +19,7 @@ const PropertiesSchema = new mongoose.Schema(
       type: Number,
     },
     propertyType: {
+      type: String,
       enum: [
         'self-con',
         'a room and parlour',
