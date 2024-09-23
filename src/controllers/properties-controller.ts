@@ -1,5 +1,6 @@
 import propertyModel from '../models/Properties-model';
 import { StatusCodes } from 'http-status-codes';
+import { NotFoundError, UnauthenticatedError } from '../errors';
 
 const getAllProps = async (req, res, next) => {
   try {
@@ -41,8 +42,26 @@ const deleteProp = (req, res) => {
   res.send('Deleting property');
 };
 
-const updateProp = (req, res) => {
-  res.send('Updating property');
+const updateProp = async (req, res, next) => {
+  const _id = req.params.id;
+
+  try {
+    const updatedProp = await propertyModel.findOneAndUpdate(
+      { _id, createdBy: req.user.userId },
+      req.body,
+      { new: true }
+    );
+
+    if (!updatedProp) {
+      throw new NotFoundError(
+        `Listing with ${_id} does not exist or you are not authorised to edit this listing`
+      );
+    }
+
+    res.status(StatusCodes.OK).json({ success: true, data: updatedProp });
+  } catch (err) {
+    next(err);
+  }
 };
 
 export {
