@@ -38,8 +38,25 @@ const createProp = async (req, res, next) => {
   }
 };
 
-const deleteProp = (req, res) => {
-  res.send('Deleting property');
+const deleteProp = async (req, res, next) => {
+  const _id = req.params.id;
+
+  try {
+    const deletedProp = await propertyModel.findOneAndDelete(
+      { _id, createdBy: req.user.userId },
+      req.body
+    );
+
+    if (!deletedProp) {
+      throw new NotFoundError(
+        `Listing with ${_id} does not exist or you are not authorised to delete this listing`
+      );
+    }
+
+    res.status(StatusCodes.OK).json({ success: true, data: deletedProp });
+  } catch (err) {
+    next(err);
+  }
 };
 
 const updateProp = async (req, res, next) => {
