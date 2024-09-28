@@ -4,8 +4,7 @@ const PropertiesSchema = new mongoose.Schema(
   {
     imgUrl: {
       type: String,
-      default:
-        'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+      required: [true, 'Your listing must have images.'],
     },
     title: {
       type: String,
@@ -36,6 +35,10 @@ const PropertiesSchema = new mongoose.Schema(
     price: {
       type: Number,
       required: [true, 'Please enter property value'],
+    },
+    featured: {
+      type: Boolean,
+      default: false,
     },
     createdBy: {
       type: mongoose.Types.ObjectId,

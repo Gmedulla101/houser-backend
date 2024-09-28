@@ -13,6 +13,10 @@ const UserSchema = new mongoose.Schema({
     minLength: 5,
     maxLength: 16,
   },
+  fullName: {
+    type: String,
+    required: [true, 'Please enter your full name'],
+  },
   email: {
     type: String,
     required: [true, 'Please enter a valid email address'],

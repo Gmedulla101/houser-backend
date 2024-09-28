@@ -9,12 +9,13 @@ import expressAsyncHandler from 'express-async-handler';
 
 type UserDetails = {
   username: string;
+  fullName?: string;
   email: string;
-  password?: string;
+  password: string;
 };
 
 const register = asyncHandler(async (req, res) => {
-  const { email, password, username }: UserDetails = req.body;
+  const { email, password, username, fullName }: UserDetails = req.body;
 
   if (!email || !password || !username) {
     throw new BadRequestError('Please enter complete sign up details');
@@ -39,6 +40,7 @@ const register = asyncHandler(async (req, res) => {
     email,
     password: hashedPassword,
     username,
+    fullName,
   });
 
   const token = jwt.sign(
@@ -46,6 +48,7 @@ const register = asyncHandler(async (req, res) => {
       userId: newUser._id,
       username: newUser.username,
       email: newUser.email,
+      fullName: newUser.fullName,
     },
     process.env.JWT_SECRET,
     { expiresIn: '30d' }
@@ -55,6 +58,7 @@ const register = asyncHandler(async (req, res) => {
     success: true,
     username: newUser.username,
     email: newUser.email,
+    fullName: newUser.fullName,
     token,
   });
 });
@@ -86,6 +90,7 @@ const login = asyncHandler(async (req, res) => {
     success: true,
     username: user.username,
     email: user.email,
+    fullName: user.fullName,
     token,
   });
 });

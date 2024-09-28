@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import { NotFoundError, UnauthenticatedError } from '../errors';
 
 const getAllProps = asyncHandler(async (req, res) => {
-  const props = await propertyModel.find({});
+  const props = await propertyModel.find({}).sort({ createdAt: -1 });
   res
     .status(StatusCodes.OK)
     .json({ success: true, data: props, nbHits: props.length });
