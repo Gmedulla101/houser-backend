@@ -10,6 +10,13 @@ const getAllProps = asyncHandler(async (req, res) => {
     .json({ success: true, data: props, nbHits: props.length });
 });
 
+const getFeaturedProps = asyncHandler(async (req, res) => {
+  const featuredProps = await propertyModel.find({ featured: true }).sort({ createdAt: -1 });
+  res
+    .status(StatusCodes.OK)
+    .json({ success: true, data: featuredProps, nbHits: featuredProps.length });
+});
+
 const getProp = asyncHandler(async (req, res) => {
   const _id = req.params.id;
   const prop = await propertyModel.findOne({ _id });
@@ -68,6 +75,7 @@ const updateProp = asyncHandler(async (req: any, res) => {
 export {
   getAllProps,
   getProp,
+  getFeaturedProps,
   getUserProp,
   createProp,
   updateProp,
