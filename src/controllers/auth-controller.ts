@@ -23,11 +23,10 @@ const register = asyncHandler(async (req, res) => {
 
   //CHECKING TO SEE IF THE USERNAME AND EMAIL ALREADY EXIST IN THE DATABASE
   const takenUsername = await userModel.findOne({ username });
+   const prevUser = await userModel.findOne({ email });
   if (takenUsername) {
-    throw new BadRequestError('Username has been taken');
+    throw new BadRequestError('Username has been taken!');
   }
-
-  const prevUser = await userModel.findOne({ email });
   if (prevUser) {
     throw new BadRequestError('User already exists!');
   }
