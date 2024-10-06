@@ -13,12 +13,24 @@ const getAllProps = asyncHandler(async (req: Request, res: Response) => {
 
 const getFeaturedProps = asyncHandler(async (req: Request, res: Response) => {
   const { location, propertyType, bedrooms, pricingRange } = req.query;
+  let queryObject: any = {};
 
-  if (location || propertyType || bedrooms || pricingRange) {
-    const filteredProps = await propertyModel.find(req.query);
-    res.status(StatusCodes.OK).json({ success: true, data: filteredProps });
-    return;
+  if (location) {
+    queryObject.location = location;
   }
+  if (propertyType) {
+    queryObject.propertyType = propertyType;
+  }
+  if (bedrooms) {
+    queryObject.bedrooms = bedrooms;
+  }
+  if (pricingRange) {
+    queryObject.pricingRange = pricingRange;
+  }
+
+  const filteredProps = await propertyModel.find(queryObject);
+  res.status(StatusCodes.OK).json({ success: true, data: filteredProps });
+  return;
 
   const featuredProps = await propertyModel
     .find({ featured: true })
