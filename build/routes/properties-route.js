@@ -7,7 +7,7 @@ const express_1 = __importDefault(require("express"));
 const properties_controller_1 = require("../controllers/properties-controller");
 const auth_middleware_1 = require("../middleware/auth-middleware");
 const propertiesRouter = express_1.default.Router();
-propertiesRouter.get('/get-all-Properties', properties_controller_1.getAllProps);
+propertiesRouter.get('/all-Properties', properties_controller_1.getAllProps);
 propertiesRouter.get('/featured-Properties', properties_controller_1.getFeaturedProps);
 propertiesRouter.get('/my-properties', auth_middleware_1.auth, properties_controller_1.getUserProp);
 propertiesRouter.get('/get-property/:id', properties_controller_1.getProp);
