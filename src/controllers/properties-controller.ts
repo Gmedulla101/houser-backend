@@ -4,6 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import { NotFoundError, UnauthenticatedError } from '../errors';
 import { Request, Response } from 'express';
 
+//GETTING ALL PROPERTIES
 const getAllProps = asyncHandler(async (req: Request, res: Response) => {
   const { location, propertyType, bedrooms, pricingRange } = req.query;
   let queryObject: any = {};
@@ -21,19 +22,20 @@ const getAllProps = asyncHandler(async (req: Request, res: Response) => {
     queryObject.pricingRange = pricingRange;
   }
 
-  const filteredProps = await propertyModel.find(queryObject);
-  res.status(StatusCodes.OK).json({ success: true, data: filteredProps });
-  return;
-
-  const allProps = await propertyModel.find({}).sort({ createdAt: -1 });
+  const allProps = await propertyModel
+    .find(queryObject)
+    .sort({ createdAt: -1 });
   res
     .status(StatusCodes.OK)
     .json({ success: true, data: allProps, nbHits: allProps.length });
 });
 
+//GETTING FEATURED PROPERTIES
 const getFeaturedProps = asyncHandler(async (req: Request, res: Response) => {
   const { location, propertyType, bedrooms, pricingRange } = req.query;
-  let queryObject: any = {};
+  let queryObject: any = {
+    featured: true,
+  };
 
   if (location) {
     queryObject.location = location;
@@ -48,27 +50,27 @@ const getFeaturedProps = asyncHandler(async (req: Request, res: Response) => {
     queryObject.pricingRange = pricingRange;
   }
 
-  const filteredProps = await propertyModel.find(queryObject);
-  res.status(StatusCodes.OK).json({ success: true, data: filteredProps });
-  return;
-
   const featuredProps = await propertyModel
-    .find({ featured: true })
+    .find(queryObject)
     .sort({ createdAt: -1 });
   res
     .status(StatusCodes.OK)
     .json({ success: true, data: featuredProps, nbHits: featuredProps.length });
 });
 
+//GETTING SINGLE PROPERTY
 const getProp = asyncHandler(async (req: Request, res: Response) => {
   const _id = req.params.id;
   const prop = await propertyModel.findOne({ _id });
   res.status(StatusCodes.OK).json({ success: true, data: prop });
 });
 
+//GETTING USER PROPERTIES
 const getUserProp = asyncHandler(async (req: Request | any, res: Response) => {
   const { location, propertyType, bedrooms, pricingRange } = req.query;
-  let queryObject: any = {};
+  let queryObject: any = {
+    createdBy: req.user.userId,
+  };
 
   if (location) {
     queryObject.location = location;
@@ -83,16 +85,13 @@ const getUserProp = asyncHandler(async (req: Request | any, res: Response) => {
     queryObject.pricingRange = pricingRange;
   }
 
-  const filteredProps = await propertyModel.find(queryObject);
-  res.status(StatusCodes.OK).json({ success: true, data: filteredProps });
-  return;
-
-  const userProps = await propertyModel.find({ createdBy: req.user.userId });
+  const userProps = await propertyModel.find(queryObject);
   res
     .status(StatusCodes.OK)
     .json({ success: true, data: userProps, nbHits: userProps.length });
 });
 
+//CREATING PROPERTY
 const createProp = asyncHandler(
   async (req: Request | any, res: Response, next) => {
     req.body.createdBy = req.user.userId;
@@ -102,6 +101,7 @@ const createProp = asyncHandler(
   }
 );
 
+//DELETING PROPERTY
 const deleteProp = asyncHandler(async (req: Request | any, res: Response) => {
   const _id = req.params.id;
 
@@ -119,6 +119,7 @@ const deleteProp = asyncHandler(async (req: Request | any, res: Response) => {
   res.status(StatusCodes.OK).json({ success: true, data: deletedProp });
 });
 
+//UPDATING PROPERTY
 const updateProp = asyncHandler(async (req: Request | any, res: Response) => {
   const _id = req.params.id;
 
@@ -135,10 +136,6 @@ const updateProp = asyncHandler(async (req: Request | any, res: Response) => {
   }
 
   res.status(StatusCodes.OK).json({ success: true, data: updatedProp });
-});
-
-const filterProp = asyncHandler(async (req: Request, res: Response) => {
-  res.status(StatusCodes.OK).json({ success: true, data: 'emptiness' });
 });
 
 export {
