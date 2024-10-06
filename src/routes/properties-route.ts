@@ -12,7 +12,7 @@ import { auth } from '../middleware/auth-middleware';
 
 const propertiesRouter = express.Router();
 
-propertiesRouter.get('/get-all-Properties', getAllProps);
+propertiesRouter.get('/all-Properties', getAllProps);
 propertiesRouter.get('/featured-Properties', getFeaturedProps);
 propertiesRouter.get('/my-properties', auth, getUserProp);
 propertiesRouter.get('/get-property/:id', getProp);
