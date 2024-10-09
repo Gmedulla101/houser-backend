@@ -31,7 +31,21 @@ const getAllProps = (0, express_async_handler_1.default)((req, res) => __awaiter
         queryObject.bedrooms = bedrooms;
     }
     if (pricingRange) {
-        queryObject.pricingRange = pricingRange;
+        if (typeof pricingRange !== 'string') {
+            throw new Error('Pricing range is not a string');
+        }
+        const rangeValues = pricingRange.split('-');
+        if (rangeValues[1] === 'e') {
+            queryObject.price = {
+                $gte: rangeValues[0],
+            };
+        }
+        else {
+            queryObject.price = {
+                $gte: rangeValues[0],
+                $lte: rangeValues[1],
+            };
+        }
     }
     const allProps = yield Properties_model_1.default
         .find(queryObject)
@@ -57,7 +71,21 @@ const getFeaturedProps = (0, express_async_handler_1.default)((req, res) => __aw
         queryObject.bedrooms = bedrooms;
     }
     if (pricingRange) {
-        queryObject.pricingRange = pricingRange;
+        if (typeof pricingRange !== 'string') {
+            throw new Error('Pricing range is not a string');
+        }
+        const rangeValues = pricingRange.split('-');
+        if (rangeValues[1] === 'e') {
+            queryObject.price = {
+                $gte: rangeValues[0],
+            };
+        }
+        else {
+            queryObject.price = {
+                $gte: rangeValues[0],
+                $lte: rangeValues[1],
+            };
+        }
     }
     const featuredProps = yield Properties_model_1.default
         .find(queryObject)
@@ -90,7 +118,21 @@ const getUserProp = (0, express_async_handler_1.default)((req, res) => __awaiter
         queryObject.bedrooms = bedrooms;
     }
     if (pricingRange) {
-        queryObject.pricingRange = pricingRange;
+        if (typeof pricingRange !== 'string') {
+            throw new Error('Pricing range is not a string');
+        }
+        const rangeValues = pricingRange.split('-');
+        if (rangeValues[1] === 'e') {
+            queryObject.price = {
+                $gte: rangeValues[0],
+            };
+        }
+        else {
+            queryObject.price = {
+                $gte: rangeValues[0],
+                $lte: rangeValues[1],
+            };
+        }
     }
     const userProps = yield Properties_model_1.default.find(queryObject);
     res
@@ -99,7 +141,7 @@ const getUserProp = (0, express_async_handler_1.default)((req, res) => __awaiter
 }));
 exports.getUserProp = getUserProp;
 //CREATING PROPERTY
-const createProp = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const createProp = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     req.body.createdBy = req.user.userId;
     const newProperty = yield Properties_model_1.default.create(Object.assign({}, req.body));
     res.status(http_status_codes_1.StatusCodes.OK).json({ sucess: true, data: newProperty });
