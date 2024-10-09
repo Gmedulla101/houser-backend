@@ -19,7 +19,21 @@ const getAllProps = asyncHandler(async (req: Request, res: Response) => {
     queryObject.bedrooms = bedrooms;
   }
   if (pricingRange) {
-    queryObject.pricingRange = pricingRange;
+    if (typeof pricingRange !== 'string') {
+      throw new Error('Pricing range is not a string');
+    }
+    const rangeValues = pricingRange.split('-');
+
+    if (rangeValues[1] === 'e') {
+      queryObject.price = {
+        $gte: rangeValues[0],
+      };
+    } else {
+      queryObject.price = {
+        $gte: rangeValues[0],
+        $lte: rangeValues[1],
+      };
+    }
   }
 
   const allProps = await propertyModel
@@ -92,14 +106,12 @@ const getUserProp = asyncHandler(async (req: Request | any, res: Response) => {
 });
 
 //CREATING PROPERTY
-const createProp = asyncHandler(
-  async (req: Request | any, res: Response, next) => {
-    req.body.createdBy = req.user.userId;
+const createProp = asyncHandler(async (req: Request | any, res: Response) => {
+  req.body.createdBy = req.user.userId;
 
-    const newProperty = await propertyModel.create({ ...req.body });
-    res.status(StatusCodes.OK).json({ sucess: true, data: newProperty });
-  }
-);
+  const newProperty = await propertyModel.create({ ...req.body });
+  res.status(StatusCodes.OK).json({ sucess: true, data: newProperty });
+});
 
 //DELETING PROPERTY
 const deleteProp = asyncHandler(async (req: Request | any, res: Response) => {
