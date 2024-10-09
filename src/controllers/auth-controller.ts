@@ -6,6 +6,7 @@ import asyncHandler from 'express-async-handler';
 import userModel from '../models/User-model';
 import { BadRequestError, UnauthenticatedError } from '../errors';
 import expressAsyncHandler from 'express-async-handler';
+import { Response, Request } from 'express';
 
 type UserDetails = {
   username: string;
@@ -14,7 +15,7 @@ type UserDetails = {
   password: string;
 };
 
-const register = asyncHandler(async (req, res) => {
+export const register = asyncHandler(async (req: Request, res: Response) => {
   const { email, password, username, fullName }: UserDetails = req.body;
 
   if (!email || !password || !username) {
@@ -23,7 +24,7 @@ const register = asyncHandler(async (req, res) => {
 
   //CHECKING TO SEE IF THE USERNAME AND EMAIL ALREADY EXIST IN THE DATABASE
   const takenUsername = await userModel.findOne({ username });
-   const prevUser = await userModel.findOne({ email });
+  const prevUser = await userModel.findOne({ email });
   if (takenUsername) {
     throw new BadRequestError('Username has been taken!');
   }
@@ -62,7 +63,7 @@ const register = asyncHandler(async (req, res) => {
   });
 });
 
-const login = asyncHandler(async (req, res) => {
+export const login = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
   if (!email || !password) {
     throw new BadRequestError('Please enter complete login details');
@@ -94,7 +95,6 @@ const login = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = {
-  register,
-  login,
-};
+export const getUser = asyncHandler(async (req: Request, res: Response) => {
+  res.status(StatusCodes.OK).json({ sucess: true, data: 'User info gotten' });
+});
