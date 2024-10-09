@@ -12,13 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getUser = exports.login = exports.register = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const http_status_codes_1 = require("http-status-codes");
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const User_model_1 = __importDefault(require("../models/User-model"));
 const errors_1 = require("../errors");
-const register = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.register = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password, username, fullName } = req.body;
     if (!email || !password || !username) {
         throw new errors_1.BadRequestError('Please enter complete sign up details');
@@ -51,11 +52,10 @@ const register = (0, express_async_handler_1.default)((req, res) => __awaiter(vo
         success: true,
         username: newUser.username,
         email: newUser.email,
-        fullName: newUser.fullName,
         token,
     });
 }));
-const login = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.login = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     if (!email || !password) {
         throw new errors_1.BadRequestError('Please enter complete login details');
@@ -73,11 +73,13 @@ const login = (0, express_async_handler_1.default)((req, res) => __awaiter(void 
         success: true,
         username: user.username,
         email: user.email,
-        fullName: user.fullName,
         token,
     });
 }));
-module.exports = {
-    register,
-    login,
-};
+exports.getUser = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield User_model_1.default.find({ _id: req.user.userId });
+    if (!user) {
+        throw new errors_1.BadRequestError('This user does not exist');
+    }
+    res.status(http_status_codes_1.StatusCodes.OK).json({ sucess: true, data: user });
+}));
