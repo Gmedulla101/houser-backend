@@ -58,7 +58,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     success: true,
     username: newUser.username,
     email: newUser.email,
-    fullName: newUser.fullName,
+
     token,
   });
 });
@@ -90,11 +90,18 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     success: true,
     username: user.username,
     email: user.email,
-    fullName: user.fullName,
     token,
   });
 });
 
-export const getUser = asyncHandler(async (req: Request, res: Response) => {
-  res.status(StatusCodes.OK).json({ sucess: true, data: 'User info gotten' });
-});
+export const getUser = asyncHandler(
+  async (req: Request | any, res: Response) => {
+    const user = await userModel.find({ _id: req.user.userId });
+
+    if (!user) {
+      throw new BadRequestError('This user does not exist');
+    }
+
+    res.status(StatusCodes.OK).json({ sucess: true, data: user });
+  }
+);
