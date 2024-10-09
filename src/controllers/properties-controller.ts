@@ -61,9 +61,22 @@ const getFeaturedProps = asyncHandler(async (req: Request, res: Response) => {
     queryObject.bedrooms = bedrooms;
   }
   if (pricingRange) {
-    queryObject.pricingRange = pricingRange;
-  }
+    if (typeof pricingRange !== 'string') {
+      throw new Error('Pricing range is not a string');
+    }
+    const rangeValues = pricingRange.split('-');
 
+    if (rangeValues[1] === 'e') {
+      queryObject.price = {
+        $gte: rangeValues[0],
+      };
+    } else {
+      queryObject.price = {
+        $gte: rangeValues[0],
+        $lte: rangeValues[1],
+      };
+    }
+  }
   const featuredProps = await propertyModel
     .find(queryObject)
     .sort({ createdAt: -1 });
@@ -96,7 +109,21 @@ const getUserProp = asyncHandler(async (req: Request | any, res: Response) => {
     queryObject.bedrooms = bedrooms;
   }
   if (pricingRange) {
-    queryObject.pricingRange = pricingRange;
+    if (typeof pricingRange !== 'string') {
+      throw new Error('Pricing range is not a string');
+    }
+    const rangeValues = pricingRange.split('-');
+
+    if (rangeValues[1] === 'e') {
+      queryObject.price = {
+        $gte: rangeValues[0],
+      };
+    } else {
+      queryObject.price = {
+        $gte: rangeValues[0],
+        $lte: rangeValues[1],
+      };
+    }
   }
 
   const userProps = await propertyModel.find(queryObject);
