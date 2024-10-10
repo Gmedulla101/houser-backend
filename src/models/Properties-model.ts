@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const PropertiesSchema = new mongoose.Schema(
   {
     imgUrl: {
-      type: String,
+      type: [String],
       required: [true, 'Your listing must have images.'],
     },
     title: {
