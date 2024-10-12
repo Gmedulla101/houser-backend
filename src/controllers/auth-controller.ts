@@ -58,7 +58,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     success: true,
     username: newUser.username,
     email: newUser.email,
-
+    id: newUser._id,
     token,
   });
 });
@@ -90,6 +90,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     success: true,
     username: user.username,
     email: user.email,
+    id: user._id,
     token,
   });
 });

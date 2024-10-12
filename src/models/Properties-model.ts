@@ -40,6 +40,14 @@ const PropertiesSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    /*    status: {
+      type: String,
+      enum: [
+        'Available',
+        'Taken',
+
+      ]
+    }, */
     createdBy: {
       type: mongoose.Types.ObjectId,
       ref: 'user',
