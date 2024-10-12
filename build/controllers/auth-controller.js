@@ -52,6 +52,7 @@ exports.register = (0, express_async_handler_1.default)((req, res) => __awaiter(
         success: true,
         username: newUser.username,
         email: newUser.email,
+        id: newUser._id,
         token,
     });
 }));
@@ -73,6 +74,7 @@ exports.login = (0, express_async_handler_1.default)((req, res) => __awaiter(voi
         success: true,
         username: user.username,
         email: user.email,
+        id: user._id,
         token,
     });
 }));

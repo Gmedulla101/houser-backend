@@ -43,6 +43,14 @@ const PropertiesSchema = new mongoose_1.default.Schema({
         type: Boolean,
         default: false,
     },
+    /*    status: {
+      type: String,
+      enum: [
+        'Available',
+        'Taken',
+
+      ]
+    }, */
     createdBy: {
         type: mongoose_1.default.Types.ObjectId,
         ref: 'user',
