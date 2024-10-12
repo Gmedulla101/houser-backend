@@ -15,13 +15,7 @@ dotenv.config();
 //NEEDED DEFAULT MIDDLEWARE
 app.use(express.json());
 app.use(urlencoded({ extended: false }));
-app.use(
-  cors({
-    origin: 'http://localhost:5173',
-    methods: 'GET,POST,DELETE,PATCH,PUT',
-    credentials: true,
-  })
-);
+app.use(cors());
 
 //SETTING UP ROUTERs
 app.use('/api/v1/properties', propertiesRouter);
