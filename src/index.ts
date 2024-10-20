@@ -18,7 +18,7 @@ app.use(urlencoded({ extended: false }));
 
 const allowedOrgins = [
   'http://localhost:5173',
-  'https://houser-navy.vercel.app/',
+  'https://houser-navy.vercel.app',
 ];
 app.use(
   cors({
