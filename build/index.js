@@ -51,7 +51,7 @@ app.use(express_1.default.json());
 app.use((0, express_1.urlencoded)({ extended: false }));
 const allowedOrgins = [
     'http://localhost:5173',
-    'https://houser-navy.vercel.app/',
+    'https://houser-navy.vercel.app',
 ];
 app.use((0, cors_1.default)({
     credentials: true,
