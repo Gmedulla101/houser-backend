@@ -5,7 +5,6 @@ import asyncHandler from 'express-async-handler';
 
 import userModel from '../models/User-model';
 import { BadRequestError, UnauthenticatedError } from '../errors';
-import expressAsyncHandler from 'express-async-handler';
 import { Response, Request } from 'express';
 
 type UserDetails = {

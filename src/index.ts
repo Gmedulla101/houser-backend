@@ -15,7 +15,17 @@ dotenv.config();
 //NEEDED DEFAULT MIDDLEWARE
 app.use(express.json());
 app.use(urlencoded({ extended: false }));
-app.use(cors());
+
+const allowedOrgins = [
+  'http://localhost:5173',
+  'https://houser-navy.vercel.app/',
+];
+app.use(
+  cors({
+    credentials: true,
+    origin: allowedOrgins,
+  })
+);
 
 //SETTING UP ROUTERs
 app.use('/api/v1/properties', propertiesRouter);
