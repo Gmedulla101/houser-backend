@@ -19,7 +19,7 @@ const http_status_codes_1 = require("http-status-codes");
 const errors_1 = require("../errors");
 //GETTING ALL PROPERTIES
 const getAllProps = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { location, propertyType, bedrooms, pricingRange } = req.query;
+    const { location, propertyType, bedrooms, pricingRange, searchValue } = req.query;
     let queryObject = {};
     if (location) {
         queryObject.location = location;
@@ -50,9 +50,23 @@ const getAllProps = (0, express_async_handler_1.default)((req, res) => __awaiter
     const allProps = yield Properties_model_1.default
         .find(queryObject)
         .sort({ createdAt: -1 });
+    let searchedProps;
+    if (searchValue) {
+        const validProps = allProps.filter((prop) => {
+            return prop.title
+                .toLowerCase()
+                .startsWith(String(searchValue).toLowerCase());
+        });
+        searchedProps = validProps;
+    }
     res
         .status(http_status_codes_1.StatusCodes.OK)
-        .json({ success: true, data: allProps, nbHits: allProps.length });
+        .json({
+        success: true,
+        data: allProps,
+        nbHits: allProps.length,
+        searchedProps,
+    });
 }));
 exports.getAllProps = getAllProps;
 //GETTING FEATURED PROPERTIES
