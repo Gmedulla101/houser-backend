@@ -6,7 +6,9 @@ import { Request, Response } from 'express';
 
 //GETTING ALL PROPERTIES
 const getAllProps = asyncHandler(async (req: Request, res: Response) => {
-  const { location, propertyType, bedrooms, pricingRange } = req.query;
+  const { location, propertyType, bedrooms, pricingRange, searchValue } =
+    req.query;
+
   let queryObject: any = {};
 
   if (location) {
@@ -39,9 +41,26 @@ const getAllProps = asyncHandler(async (req: Request, res: Response) => {
   const allProps = await propertyModel
     .find(queryObject)
     .sort({ createdAt: -1 });
+
+  let searchedProps;
+  if (searchValue) {
+    const validProps = allProps.filter((prop) => {
+      return prop.title
+        .toLowerCase()
+        .startsWith(String(searchValue).toLowerCase());
+    });
+
+    searchedProps = validProps;
+  }
+
   res
     .status(StatusCodes.OK)
-    .json({ success: true, data: allProps, nbHits: allProps.length });
+    .json({
+      success: true,
+      data: allProps,
+      nbHits: allProps.length,
+      searchedProps,
+    });
 });
 
 //GETTING FEATURED PROPERTIES
