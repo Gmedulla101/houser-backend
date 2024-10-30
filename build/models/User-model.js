@@ -8,8 +8,6 @@ const UserSchema = new mongoose_1.default.Schema({
     username: {
         type: String,
         required: [true, 'Please enter your username'],
-        minLength: 5,
-        maxLength: 16,
     },
     fullName: {
         type: String,
