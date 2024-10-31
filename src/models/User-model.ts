@@ -24,6 +24,16 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please enter our password'],
     },
+    status: {
+      type: String,
+      enum: ['seeker', 'owner'],
+    },
+    phoneNumber: {
+      type: Number,
+    },
+    country: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

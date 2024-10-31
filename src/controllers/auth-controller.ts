@@ -105,3 +105,25 @@ export const getUser = asyncHandler(
     res.status(StatusCodes.OK).json({ sucess: true, data: user });
   }
 );
+
+export const checkUser = asyncHandler(async (req: Request, res: Response) => {
+  const { username, email } = req.query;
+
+  let queryObject: any = {};
+
+  if (username) {
+    queryObject.username = username;
+  }
+
+  if (email) {
+    queryObject.email = email;
+  }
+
+  const user = await userModel.findOne(queryObject);
+
+  if (user) {
+    throw new BadRequestError(`${username || email} already exists`);
+  }
+
+  res.status(StatusCodes.OK).json({ success: true, data: 'proceed' });
+});
