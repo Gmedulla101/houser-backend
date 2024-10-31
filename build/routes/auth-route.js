@@ -10,4 +10,5 @@ const authRouter = express_1.default.Router();
 authRouter.post('/register-user', auth_controller_1.register);
 authRouter.post('/user-login', auth_controller_1.login);
 authRouter.get('/getUser', auth_middleware_1.auth, auth_controller_1.getUser);
+authRouter.get('/checkUser', auth_controller_1.checkUser);
 exports.default = authRouter;
