@@ -2,157 +2,164 @@ import propertyModel from '../models/Properties-model';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
 import { NotFoundError, UnauthenticatedError } from '../errors';
-import { Request, Response } from 'express';
+import { Response } from 'express';
+import { ModifiedRequest } from '../middleware/auth-middleware';
 
 //GETTING ALL PROPERTIES
-const getAllProps = asyncHandler(async (req: Request, res: Response) => {
-  const { location, propertyType, bedrooms, pricingRange, searchValue } =
-    req.query;
+const getAllProps = asyncHandler(
+  async (req: ModifiedRequest, res: Response) => {
+    const { location, propertyType, bedrooms, pricingRange, searchValue } =
+      req.query;
 
-  let queryObject: any = {};
+    let queryObject: any = {};
 
-  if (location) {
-    queryObject.location = location;
-  }
-  if (propertyType) {
-    queryObject.propertyType = propertyType;
-  }
-  if (bedrooms) {
-    queryObject.bedrooms = bedrooms;
-  }
-  if (pricingRange) {
-    if (typeof pricingRange !== 'string') {
-      throw new Error('Pricing range is not a string');
+    if (location) {
+      queryObject.location = location;
     }
-    const rangeValues = pricingRange.split('-');
-
-    if (rangeValues[1] === 'e') {
-      queryObject.price = {
-        $gte: rangeValues[0],
-      };
-    } else {
-      queryObject.price = {
-        $gte: rangeValues[0],
-        $lte: rangeValues[1],
-      };
+    if (propertyType) {
+      queryObject.propertyType = propertyType;
     }
-  }
+    if (bedrooms) {
+      queryObject.bedrooms = bedrooms;
+    }
+    if (pricingRange) {
+      if (typeof pricingRange !== 'string') {
+        throw new Error('Pricing range is not a string');
+      }
+      const rangeValues = pricingRange.split('-');
 
-  const allProps = await propertyModel
-    .find(queryObject)
-    .sort({ createdAt: -1 });
+      if (rangeValues[1] === 'e') {
+        queryObject.price = {
+          $gte: rangeValues[0],
+        };
+      } else {
+        queryObject.price = {
+          $gte: rangeValues[0],
+          $lte: rangeValues[1],
+        };
+      }
+    }
 
-  let searchedProps;
-  if (searchValue) {
-    const validProps = allProps.filter((prop) => {
-      return prop.title
-        .toLowerCase()
-        .startsWith(String(searchValue).toLowerCase());
-    });
+    const allProps = await propertyModel
+      .find(queryObject)
+      .sort({ createdAt: -1 });
 
-    searchedProps = validProps;
-  }
+    let searchedProps;
+    if (searchValue) {
+      const validProps = allProps.filter((prop) => {
+        return prop.title
+          .toLowerCase()
+          .startsWith(String(searchValue).toLowerCase());
+      });
 
-  res
-    .status(StatusCodes.OK)
-    .json({
+      searchedProps = validProps;
+    }
+
+    res.status(StatusCodes.OK).json({
       success: true,
       data: allProps,
       nbHits: allProps.length,
       searchedProps,
     });
-});
+  }
+);
 
 //GETTING FEATURED PROPERTIES
-const getFeaturedProps = asyncHandler(async (req: Request, res: Response) => {
-  const { location, propertyType, bedrooms, pricingRange } = req.query;
-  let queryObject: any = {
-    featured: true,
-  };
+const getFeaturedProps = asyncHandler(
+  async (req: ModifiedRequest, res: Response) => {
+    const { location, propertyType, bedrooms, pricingRange } = req.query;
+    let queryObject: any = {
+      featured: true,
+    };
 
-  if (location) {
-    queryObject.location = location;
-  }
-  if (propertyType) {
-    queryObject.propertyType = propertyType;
-  }
-  if (bedrooms) {
-    queryObject.bedrooms = bedrooms;
-  }
-  if (pricingRange) {
-    if (typeof pricingRange !== 'string') {
-      throw new Error('Pricing range is not a string');
+    if (location) {
+      queryObject.location = location;
     }
-    const rangeValues = pricingRange.split('-');
+    if (propertyType) {
+      queryObject.propertyType = propertyType;
+    }
+    if (bedrooms) {
+      queryObject.bedrooms = bedrooms;
+    }
+    if (pricingRange) {
+      if (typeof pricingRange !== 'string') {
+        throw new Error('Pricing range is not a string');
+      }
+      const rangeValues = pricingRange.split('-');
 
-    if (rangeValues[1] === 'e') {
-      queryObject.price = {
-        $gte: rangeValues[0],
-      };
-    } else {
-      queryObject.price = {
-        $gte: rangeValues[0],
-        $lte: rangeValues[1],
-      };
+      if (rangeValues[1] === 'e') {
+        queryObject.price = {
+          $gte: rangeValues[0],
+        };
+      } else {
+        queryObject.price = {
+          $gte: rangeValues[0],
+          $lte: rangeValues[1],
+        };
+      }
     }
+    const featuredProps = await propertyModel
+      .find(queryObject)
+      .sort({ createdAt: -1 });
+    res.status(StatusCodes.OK).json({
+      success: true,
+      data: featuredProps,
+      nbHits: featuredProps.length,
+    });
   }
-  const featuredProps = await propertyModel
-    .find(queryObject)
-    .sort({ createdAt: -1 });
-  res
-    .status(StatusCodes.OK)
-    .json({ success: true, data: featuredProps, nbHits: featuredProps.length });
-});
+);
 
 //GETTING SINGLE PROPERTY
-const getProp = asyncHandler(async (req: Request, res: Response) => {
+const getProp = asyncHandler(async (req: ModifiedRequest, res: Response) => {
   const _id = req.params.id;
   const prop = await propertyModel.findOne({ _id });
   res.status(StatusCodes.OK).json({ success: true, data: prop });
 });
 
 //GETTING USER PROPERTIES
-const getUserProp = asyncHandler(async (req: Request | any, res: Response) => {
-  const { location, propertyType, bedrooms, pricingRange } = req.query;
-  let queryObject: any = {
-    createdBy: req.user.userId,
-  };
+const getUserProp = asyncHandler(
+  async (req: ModifiedRequest, res: Response) => {
+    const { location, propertyType, bedrooms, pricingRange } = req.query;
+    let queryObject: any = {
+      createdBy: req.user.userId,
+    };
 
-  if (location) {
-    queryObject.location = location;
-  }
-  if (propertyType) {
-    queryObject.propertyType = propertyType;
-  }
-  if (bedrooms) {
-    queryObject.bedrooms = bedrooms;
-  }
-  if (pricingRange) {
-    if (typeof pricingRange !== 'string') {
-      throw new Error('Pricing range is not a string');
+    if (location) {
+      queryObject.location = location;
     }
-    const rangeValues = pricingRange.split('-');
-
-    if (rangeValues[1] === 'e') {
-      queryObject.price = {
-        $gte: rangeValues[0],
-      };
-    } else {
-      queryObject.price = {
-        $gte: rangeValues[0],
-        $lte: rangeValues[1],
-      };
+    if (propertyType) {
+      queryObject.propertyType = propertyType;
     }
-  }
+    if (bedrooms) {
+      queryObject.bedrooms = bedrooms;
+    }
+    if (pricingRange) {
+      if (typeof pricingRange !== 'string') {
+        throw new Error('Pricing range is not a string');
+      }
+      const rangeValues = pricingRange.split('-');
 
-  const userProps = await propertyModel.find(queryObject);
-  res
-    .status(StatusCodes.OK)
-    .json({ success: true, data: userProps, nbHits: userProps.length });
-});
+      if (rangeValues[1] === 'e') {
+        queryObject.price = {
+          $gte: rangeValues[0],
+        };
+      } else {
+        queryObject.price = {
+          $gte: rangeValues[0],
+          $lte: rangeValues[1],
+        };
+      }
+    }
+
+    const userProps = await propertyModel.find(queryObject);
+    res
+      .status(StatusCodes.OK)
+      .json({ success: true, data: userProps, nbHits: userProps.length });
+  }
+);
 
 //CREATING PROPERTY
-const createProp = asyncHandler(async (req: Request | any, res: Response) => {
+const createProp = asyncHandler(async (req: ModifiedRequest, res: Response) => {
   req.body.createdBy = req.user.userId;
 
   const newProperty = await propertyModel.create({ ...req.body });
@@ -160,7 +167,7 @@ const createProp = asyncHandler(async (req: Request | any, res: Response) => {
 });
 
 //DELETING PROPERTY
-const deleteProp = asyncHandler(async (req: Request | any, res: Response) => {
+const deleteProp = asyncHandler(async (req: ModifiedRequest, res: Response) => {
   const _id = req.params.id;
 
   const deletedProp = await propertyModel.findOneAndDelete(
@@ -178,7 +185,7 @@ const deleteProp = asyncHandler(async (req: Request | any, res: Response) => {
 });
 
 //UPDATING PROPERTY
-const updateProp = asyncHandler(async (req: Request | any, res: Response) => {
+const updateProp = asyncHandler(async (req: ModifiedRequest, res: Response) => {
   const _id = req.params.id;
 
   const updatedProp = await propertyModel.findOneAndUpdate(

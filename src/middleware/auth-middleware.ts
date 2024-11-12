@@ -1,7 +1,16 @@
 import jwt from 'jsonwebtoken';
 import { UnauthenticatedError } from '../errors';
+import { Request, Response, NextFunction } from 'express';
 
-const auth = (req, res, next) => {
+export interface ModifiedRequest extends Request {
+  user?: {
+    username: string;
+    email: string;
+    userId: string;
+  };
+}
+
+const auth = (req: ModifiedRequest, res: Response, next: NextFunction) => {
   const authHeader: string = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer')) {

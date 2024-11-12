@@ -24,9 +24,9 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please enter our password'],
     },
-    status: {
+    role: {
       type: String,
-      enum: ['seeker', 'owner'],
+      enum: ['hunter', 'owner'],
     },
     phoneNumber: {
       type: Number,
