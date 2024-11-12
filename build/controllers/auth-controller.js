@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkUser = exports.getUser = exports.login = exports.register = void 0;
+exports.login = exports.register = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const http_status_codes_1 = require("http-status-codes");
@@ -77,26 +77,4 @@ exports.login = (0, express_async_handler_1.default)((req, res) => __awaiter(voi
         id: user._id,
         token,
     });
-}));
-exports.getUser = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield User_model_1.default.find({ _id: req.user.userId });
-    if (!user) {
-        throw new errors_1.BadRequestError('This user does not exist');
-    }
-    res.status(http_status_codes_1.StatusCodes.OK).json({ sucess: true, data: user });
-}));
-exports.checkUser = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { username, email } = req.query;
-    let queryObject = {};
-    if (username) {
-        queryObject.username = username;
-    }
-    if (email) {
-        queryObject.email = email;
-    }
-    const user = yield User_model_1.default.findOne(queryObject);
-    if (user) {
-        throw new errors_1.BadRequestError(`${username || email} already exists`);
-    }
-    res.status(http_status_codes_1.StatusCodes.OK).json({ success: true, data: 'proceed' });
 }));

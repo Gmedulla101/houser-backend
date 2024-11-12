@@ -39,11 +39,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importStar(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const cors_1 = __importDefault(require("cors"));
-const properties_route_1 = __importDefault(require("./routes/properties-route"));
-const auth_route_1 = __importDefault(require("./routes/auth-route"));
 const connectDB_1 = __importDefault(require("./db/connectDB"));
 const not_found_1 = __importDefault(require("./middleware/not-found"));
 const error_handler_1 = __importDefault(require("./middleware/error-handler"));
+//IMPORTING ROUTES
+const user_route_1 = __importDefault(require("./routes/user-route"));
+const properties_route_1 = __importDefault(require("./routes/properties-route"));
+const auth_route_1 = __importDefault(require("./routes/auth-route"));
 const app = (0, express_1.default)();
 dotenv_1.default.config();
 //NEEDED DEFAULT MIDDLEWARE
@@ -58,6 +60,7 @@ app.use((0, cors_1.default)({
     origin: allowedOrgins,
 }));
 //SETTING UP ROUTERs
+app.use('/api/v1/user', user_route_1.default);
 app.use('/api/v1/properties', properties_route_1.default);
 app.use('/api/v1/auth', auth_route_1.default);
 //ERROR MIDDLEWARE

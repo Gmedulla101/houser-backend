@@ -59,9 +59,7 @@ const getAllProps = (0, express_async_handler_1.default)((req, res) => __awaiter
         });
         searchedProps = validProps;
     }
-    res
-        .status(http_status_codes_1.StatusCodes.OK)
-        .json({
+    res.status(http_status_codes_1.StatusCodes.OK).json({
         success: true,
         data: allProps,
         nbHits: allProps.length,
@@ -104,9 +102,11 @@ const getFeaturedProps = (0, express_async_handler_1.default)((req, res) => __aw
     const featuredProps = yield Properties_model_1.default
         .find(queryObject)
         .sort({ createdAt: -1 });
-    res
-        .status(http_status_codes_1.StatusCodes.OK)
-        .json({ success: true, data: featuredProps, nbHits: featuredProps.length });
+    res.status(http_status_codes_1.StatusCodes.OK).json({
+        success: true,
+        data: featuredProps,
+        nbHits: featuredProps.length,
+    });
 }));
 exports.getFeaturedProps = getFeaturedProps;
 //GETTING SINGLE PROPERTY
