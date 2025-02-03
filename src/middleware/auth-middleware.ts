@@ -11,7 +11,7 @@ export interface ModifiedRequest extends Request {
 }
 
 const auth = (req: ModifiedRequest, res: Response, next: NextFunction) => {
-  const authHeader: string = req.headers.authorization;
+  const authHeader: string | undefined = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer')) {
     throw new UnauthenticatedError('Authentication invalid');
@@ -19,7 +19,11 @@ const auth = (req: ModifiedRequest, res: Response, next: NextFunction) => {
   const token = authHeader.split(' ')[1];
 
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const authSecret = process.env.JWT_SECRET;
+    if (!authSecret) {
+      throw new Error('Problems in the env file, type: jsonwebtoken');
+    }
+    const payload: any = jwt.verify(token, authSecret);
     req.user = {
       username: payload.username,
       email: payload.email,

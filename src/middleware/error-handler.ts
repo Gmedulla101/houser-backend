@@ -1,6 +1,20 @@
 import { StatusCodes } from 'http-status-codes';
+import { Request, Response, NextFunction } from 'express';
 
-const errorHandlerMiddleware = (err, req, res, next) => {
+interface ModifiedErr extends Error {
+  statusCode: number;
+  errors: any;
+  value: any;
+  code: any;
+  keyValue: any;
+}
+
+const errorHandlerMiddleware = (
+  err: ModifiedErr,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   let customError = {
     statusCode: err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
     msg: err.message || 'Something went wrong, please try again later',

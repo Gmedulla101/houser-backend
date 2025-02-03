@@ -7,7 +7,7 @@ import { BadRequestError } from '../errors';
 
 export const getUser = asyncHandler(
   async (req: ModifiedRequest, res: Response) => {
-    const user = await userModel.find({ _id: req.user.userId });
+    const user = await userModel.find({ _id: req?.user?.userId });
 
     if (!user) {
       throw new BadRequestError('This user does not exist');

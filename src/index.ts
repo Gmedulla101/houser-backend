@@ -12,8 +12,8 @@ import userRouter from './routes/user-route';
 import propertiesRouter from './routes/properties-route';
 import authRouter from './routes/auth-route';
 
-const app = express();
 dotenv.config();
+const app = express();
 
 //NEEDED DEFAULT MIDDLEWARE
 app.use(express.json());
@@ -42,8 +42,16 @@ app.use(errorHandlerMiddleware);
 const PORT = process.env.PORT || 5000;
 
 const start = async () => {
-  await connectDB(process.env.MONGO_URI);
-  console.log('Database connected');
+  try {
+    const mongoURI = process.env.MONGO_URI;
+    if (!mongoURI) {
+      throw new Error('Problems with the env file, type: MongoURI');
+    }
+    await connectDB(mongoURI);
+    console.log('Database connected');
+  } catch (error) {
+    console.error(error);
+  }
   app.listen(PORT, () => {
     console.log(`Server is listening at port ${PORT}`);
   });

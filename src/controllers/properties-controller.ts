@@ -121,7 +121,7 @@ const getUserProp = asyncHandler(
   async (req: ModifiedRequest, res: Response) => {
     const { location, propertyType, bedrooms, pricingRange } = req.query;
     let queryObject: any = {
-      createdBy: req.user.userId,
+      createdBy: req?.user?.userId,
     };
 
     if (location) {
@@ -160,7 +160,7 @@ const getUserProp = asyncHandler(
 
 //CREATING PROPERTY
 const createProp = asyncHandler(async (req: ModifiedRequest, res: Response) => {
-  req.body.createdBy = req.user.userId;
+  req.body.createdBy = req?.user?.userId;
 
   const newProperty = await propertyModel.create({ ...req.body });
   res.status(StatusCodes.OK).json({ sucess: true, data: newProperty });
@@ -171,7 +171,7 @@ const deleteProp = asyncHandler(async (req: ModifiedRequest, res: Response) => {
   const _id = req.params.id;
 
   const deletedProp = await propertyModel.findOneAndDelete(
-    { _id, createdBy: req.user.userId },
+    { _id, createdBy: req?.user?.userId },
     req.body
   );
 
@@ -189,7 +189,7 @@ const updateProp = asyncHandler(async (req: ModifiedRequest, res: Response) => {
   const _id = req.params.id;
 
   const updatedProp = await propertyModel.findOneAndUpdate(
-    { _id, createdBy: req.user.userId },
+    { _id, createdBy: req?.user?.userId },
     req.body,
     { new: true }
   );

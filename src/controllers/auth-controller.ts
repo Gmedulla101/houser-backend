@@ -1,11 +1,14 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import dotenv from 'dotenv';
 import { StatusCodes } from 'http-status-codes';
 import asyncHandler from 'express-async-handler';
 
 import userModel from '../models/User-model';
 import { BadRequestError, UnauthenticatedError } from '../errors';
 import { Response, Request } from 'express';
+
+dotenv.config();
 
 type UserDetails = {
   username: string;
@@ -14,6 +17,14 @@ type UserDetails = {
   password: string;
 };
 
+//ENSURING PRESENCE OF JWT SECRET
+const authSecret = process.env.JWT_SECRET;
+
+if (!authSecret) {
+  throw new Error('Problems with the env file, type: jsonwebtoken');
+}
+
+//REGISTER FUNCTIONALITY
 export const register = asyncHandler(async (req: Request, res: Response) => {
   const { email, password, username, fullName }: UserDetails = req.body;
 
@@ -49,7 +60,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
       email: newUser.email,
       fullName: newUser.fullName,
     },
-    process.env.JWT_SECRET,
+    authSecret,
     { expiresIn: '30d' }
   );
 
@@ -62,6 +73,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+//LOGIN FUNCTIONALITY
 export const login = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -81,7 +93,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
   const token = jwt.sign(
     { userId: user._id, username: user.username, email: user.email },
-    process.env.JWT_SECRET,
+    authSecret,
     { expiresIn: '30d' }
   );
 
@@ -94,6 +106,10 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
-
-
-
+//GOOGLE AUTH FUNCTIONALITY
+export const signInWithGoogle = (req: Request, res: Response) => {
+  res.status(StatusCodes.OK).json({
+    success: true,
+    data: 'Google ways!',
+  });
+};
