@@ -118,9 +118,10 @@ const getProp = (0, express_async_handler_1.default)((req, res) => __awaiter(voi
 exports.getProp = getProp;
 //GETTING USER PROPERTIES
 const getUserProp = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     const { location, propertyType, bedrooms, pricingRange } = req.query;
     let queryObject = {
-        createdBy: req.user.userId,
+        createdBy: (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.userId,
     };
     if (location) {
         queryObject.location = location;
@@ -156,15 +157,17 @@ const getUserProp = (0, express_async_handler_1.default)((req, res) => __awaiter
 exports.getUserProp = getUserProp;
 //CREATING PROPERTY
 const createProp = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    req.body.createdBy = req.user.userId;
+    var _a;
+    req.body.createdBy = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.userId;
     const newProperty = yield Properties_model_1.default.create(Object.assign({}, req.body));
     res.status(http_status_codes_1.StatusCodes.OK).json({ sucess: true, data: newProperty });
 }));
 exports.createProp = createProp;
 //DELETING PROPERTY
 const deleteProp = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     const _id = req.params.id;
-    const deletedProp = yield Properties_model_1.default.findOneAndDelete({ _id, createdBy: req.user.userId }, req.body);
+    const deletedProp = yield Properties_model_1.default.findOneAndDelete({ _id, createdBy: (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.userId }, req.body);
     if (!deletedProp) {
         throw new errors_1.NotFoundError(`Listing with ${_id} does not exist or you are not authorised to delete this listing`);
     }
@@ -173,8 +176,9 @@ const deleteProp = (0, express_async_handler_1.default)((req, res) => __awaiter(
 exports.deleteProp = deleteProp;
 //UPDATING PROPERTY
 const updateProp = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     const _id = req.params.id;
-    const updatedProp = yield Properties_model_1.default.findOneAndUpdate({ _id, createdBy: req.user.userId }, req.body, { new: true });
+    const updatedProp = yield Properties_model_1.default.findOneAndUpdate({ _id, createdBy: (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.userId }, req.body, { new: true });
     if (!updatedProp) {
         throw new errors_1.NotFoundError(`Listing with ${_id} does not exist or you are not authorised to edit this listing`);
     }

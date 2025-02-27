@@ -18,7 +18,8 @@ const http_status_codes_1 = require("http-status-codes");
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const errors_1 = require("../errors");
 exports.getUser = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield User_model_1.default.find({ _id: req.user.userId });
+    var _a;
+    const user = yield User_model_1.default.find({ _id: (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.userId });
     if (!user) {
         throw new errors_1.BadRequestError('This user does not exist');
     }
