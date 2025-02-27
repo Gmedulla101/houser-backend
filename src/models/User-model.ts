@@ -22,7 +22,6 @@ const UserSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, 'Please enter our password'],
     },
     role: {
       type: String,
@@ -32,6 +31,9 @@ const UserSchema = new mongoose.Schema(
       type: Number,
     },
     country: {
+      type: String,
+    },
+    profilePic: {
       type: String,
     },
   },

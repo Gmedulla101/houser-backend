@@ -120,8 +120,31 @@ export const googleFailure = asyncHandler(
 
 export const googleSuccess = asyncHandler(
   async (req: Request, res: Response) => {
-    res.redirect(
-      `http://localhost:5173/google-sucess?user=${JSON.stringify(req.user)}`
-    );
+    if (!req.user) {
+      res.status(StatusCodes.UNAUTHORIZED).json({ msg: 'Unauthorised' });
+    }
+
+    //RECEIVING THE TOKEN DIRECTLY AFTER VERIFYING USER PRESCENCE IN DATABSE IN THE PASSPORT JS UTILITY
+    const token = req.user;
+
+    res.redirect(`http://localhost:5173/google-success/token?token=${token}`);
   }
 );
+
+export const googleLogout = asyncHandler(async (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      console.error('Error during logout:', err);
+      return res.status(500).json({ message: 'Logout failed' });
+    }
+
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Error destroying session:', err);
+        return res.status(500).json({ message: 'Logout failed' });
+      }
+
+      res.redirect('http://localhost:5173');
+    });
+  });
+});
