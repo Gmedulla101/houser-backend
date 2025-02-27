@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import userModel from '../models/User-model';
 import jwt from 'jsonwebtoken';
 import passportStrategy from 'passport-google-oauth2';

@@ -101,7 +101,7 @@ exports.googleSuccess = (0, express_async_handler_1.default)((req, res) => __awa
     }
     //RECEIVING THE TOKEN DIRECTLY AFTER VERIFYING USER PRESCENCE IN DATABSE IN THE PASSPORT JS UTILITY
     const token = req.user;
-    res.redirect(`http://localhost:5173/google-success/token?token=${token}`);
+    res.redirect(`https://houser-navy.vercel.app/google-success/token?token=${token}`);
 }));
 exports.googleLogout = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     req.logout((err) => {
