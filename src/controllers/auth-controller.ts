@@ -143,8 +143,11 @@ export const googleLogout = asyncHandler(async (req, res) => {
         console.error('Error destroying session:', err);
         return res.status(500).json({ message: 'Logout failed' });
       }
+    });
 
-      res.redirect('http://localhost:5173');
+    res.status(StatusCodes.OK).json({
+      success: true,
+      msg: 'Logged out',
     });
   });
 });
