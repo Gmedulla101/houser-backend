@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 import { StatusCodes } from 'http-status-codes';
 import asyncHandler from 'express-async-handler';
-
+import passport from 'passport-google-oauth2';
 import userModel from '../models/User-model';
 import { BadRequestError, UnauthenticatedError } from '../errors';
 import { Response, Request } from 'express';
@@ -49,7 +49,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   const newUser = await userModel.create({
     email,
     password: hashedPassword,
-    username,
+    username: username.toLowerCase(),
     fullName,
   });
 
@@ -107,9 +107,21 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 });
 
 //GOOGLE AUTH FUNCTIONALITY
-export const signInWithGoogle = (req: Request, res: Response) => {
-  res.status(StatusCodes.OK).json({
-    success: true,
-    data: 'Google ways!',
-  });
-};
+
+export const googleFailure = asyncHandler(
+  async (req: Request, res: Response) => {
+    console.log(req.user);
+    res.status(StatusCodes.UNAUTHORIZED).json({
+      success: false,
+      msg: 'Auth with google failed',
+    });
+  }
+);
+
+export const googleSuccess = asyncHandler(
+  async (req: Request, res: Response) => {
+    res.redirect(
+      `http://localhost:5173/google-sucess?user=${JSON.stringify(req.user)}`
+    );
+  }
+);
