@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 import { StatusCodes } from 'http-status-codes';
 import asyncHandler from 'express-async-handler';
-
+import passport from 'passport-google-oauth2';
 import userModel from '../models/User-model';
 import { BadRequestError, UnauthenticatedError } from '../errors';
 import { Response, Request } from 'express';
@@ -49,7 +49,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   const newUser = await userModel.create({
     email,
     password: hashedPassword,
-    username,
+    username: username.toLowerCase(),
     fullName,
   });
 
@@ -107,9 +107,47 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 });
 
 //GOOGLE AUTH FUNCTIONALITY
-export const signInWithGoogle = (req: Request, res: Response) => {
-  res.status(StatusCodes.OK).json({
-    success: true,
-    data: 'Google ways!',
+
+export const googleFailure = asyncHandler(
+  async (req: Request, res: Response) => {
+    console.log(req.user);
+    res.status(StatusCodes.UNAUTHORIZED).json({
+      success: false,
+      msg: 'Auth with google failed',
+    });
+  }
+);
+
+export const googleSuccess = asyncHandler(
+  async (req: Request, res: Response) => {
+    if (!req.user) {
+      res.status(StatusCodes.UNAUTHORIZED).json({ msg: 'Unauthorised' });
+    }
+
+    //RECEIVING THE TOKEN DIRECTLY AFTER VERIFYING USER PRESCENCE IN DATABSE IN THE PASSPORT JS UTILITY
+    const token = req.user;
+
+    res.redirect(`http://localhost:5173/google-success/token?token=${token}`);
+  }
+);
+
+export const googleLogout = asyncHandler(async (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      console.error('Error during logout:', err);
+      return res.status(500).json({ message: 'Logout failed' });
+    }
+
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Error destroying session:', err);
+        return res.status(500).json({ message: 'Logout failed' });
+      }
+    });
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      msg: 'Logged out',
+    });
   });
-};
+});

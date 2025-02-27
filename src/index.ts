@@ -2,6 +2,9 @@
 import express, { urlencoded } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import passport from 'passport';
+import session from 'express-session';
+import './utils/passport-google-auth';
 
 import connectDB from './db/connectDB';
 import notFound from './middleware/not-found';
@@ -14,6 +17,19 @@ import authRouter from './routes/auth-route';
 
 dotenv.config();
 const app = express();
+const sessionSecret = process.env.SESSION_SECRET;
+if (!sessionSecret) {
+  throw new Error('Session secret not set');
+}
+app.use(
+  session({
+    secret: sessionSecret,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 //NEEDED DEFAULT MIDDLEWARE
 app.use(express.json());

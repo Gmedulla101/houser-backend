@@ -43,7 +43,8 @@ const errorHandlerMiddleware = (
   }
 
   // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ err });
-  return res.status(customError.statusCode).json({ msg: customError.msg });
+  res.status(customError.statusCode).json({ msg: customError.msg });
+  return;
 };
 
 export default errorHandlerMiddleware;
