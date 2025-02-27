@@ -13,7 +13,11 @@ const auth = (req, res, next) => {
     }
     const token = authHeader.split(' ')[1];
     try {
-        const payload = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
+        const authSecret = process.env.JWT_SECRET;
+        if (!authSecret) {
+            throw new Error('Problems in the env file, type: jsonwebtoken');
+        }
+        const payload = jsonwebtoken_1.default.verify(token, authSecret);
         req.user = {
             username: payload.username,
             email: payload.email,

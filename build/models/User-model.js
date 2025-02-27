@@ -19,7 +19,6 @@ const UserSchema = new mongoose_1.default.Schema({
     },
     password: {
         type: String,
-        required: [true, 'Please enter our password'],
     },
     role: {
         type: String,
@@ -29,6 +28,9 @@ const UserSchema = new mongoose_1.default.Schema({
         type: Number,
     },
     country: {
+        type: String,
+    },
+    profilePic: {
         type: String,
     },
 }, { timestamps: true });

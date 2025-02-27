@@ -15,13 +15,23 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -39,6 +49,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importStar(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const cors_1 = __importDefault(require("cors"));
+const passport_1 = __importDefault(require("passport"));
+const express_session_1 = __importDefault(require("express-session"));
+require("./utils/passport-google-auth");
 const connectDB_1 = __importDefault(require("./db/connectDB"));
 const not_found_1 = __importDefault(require("./middleware/not-found"));
 const error_handler_1 = __importDefault(require("./middleware/error-handler"));
@@ -46,8 +59,19 @@ const error_handler_1 = __importDefault(require("./middleware/error-handler"));
 const user_route_1 = __importDefault(require("./routes/user-route"));
 const properties_route_1 = __importDefault(require("./routes/properties-route"));
 const auth_route_1 = __importDefault(require("./routes/auth-route"));
-const app = (0, express_1.default)();
 dotenv_1.default.config();
+const app = (0, express_1.default)();
+const sessionSecret = process.env.SESSION_SECRET;
+if (!sessionSecret) {
+    throw new Error('Session secret not set');
+}
+app.use((0, express_session_1.default)({
+    secret: sessionSecret,
+    resave: false,
+    saveUninitialized: false,
+}));
+app.use(passport_1.default.initialize());
+app.use(passport_1.default.session());
 //NEEDED DEFAULT MIDDLEWARE
 app.use(express_1.default.json());
 app.use((0, express_1.urlencoded)({ extended: false }));
@@ -68,8 +92,17 @@ app.use(not_found_1.default);
 app.use(error_handler_1.default);
 const PORT = process.env.PORT || 5000;
 const start = () => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, connectDB_1.default)(process.env.MONGO_URI);
-    console.log('Database connected');
+    try {
+        const mongoURI = process.env.MONGO_URI;
+        if (!mongoURI) {
+            throw new Error('Problems with the env file, type: MongoURI');
+        }
+        yield (0, connectDB_1.default)(mongoURI);
+        console.log('Database connected');
+    }
+    catch (error) {
+        console.error(error);
+    }
     app.listen(PORT, () => {
         console.log(`Server is listening at port ${PORT}`);
     });
