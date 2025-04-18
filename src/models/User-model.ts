@@ -27,6 +27,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
       enum: ['hunter', 'owner'],
     },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
     phoneNumber: {
       type: Number,
     },

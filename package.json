@@ -23,6 +23,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.9.0",
     "mongoose": "^8.6.2",
+    "nodemailer": "^6.10.0",
     "nodemon": "^3.1.4",
     "passport": "^0.7.0",
     "passport-google-oauth2": "^0.2.0",
@@ -35,6 +36,7 @@
     "@types/express": "^5.0.0",
     "@types/express-session": "^1.18.1",
     "@types/jsonwebtoken": "^9.0.8",
+    "@types/nodemailer": "^6.4.17",
     "@types/passport": "^1.0.17",
     "@types/passport-google-oauth2": "^0.1.10"
   }

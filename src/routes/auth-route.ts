@@ -5,6 +5,8 @@ import {
   googleSuccess,
   googleFailure,
   googleLogout,
+  confirmCodeResetPassword,
+  confirmEmailSendOTP,
 } from '../controllers/auth-controller';
 import passport from 'passport';
 
@@ -29,5 +31,9 @@ authRouter.get(
 authRouter.get('/google-faiure', googleFailure);
 
 authRouter.get('/logout', googleLogout);
+
+//FORGOT PASSWORD ROUTE
+authRouter.post('/confirm-email', confirmEmailSendOTP);
+authRouter.post('/reset-password', confirmCodeResetPassword);
 
 export default authRouter;
