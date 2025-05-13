@@ -16,4 +16,7 @@ authRouter.get('/google/callback', passport_1.default.authenticate('google', {
 }), auth_controller_1.googleSuccess);
 authRouter.get('/google-faiure', auth_controller_1.googleFailure);
 authRouter.get('/logout', auth_controller_1.googleLogout);
+//FORGOT PASSWORD ROUTE
+authRouter.post('/confirm-email', auth_controller_1.confirmEmailSendOTP);
+authRouter.post('/reset-password', auth_controller_1.confirmCodeResetPassword);
 exports.default = authRouter;

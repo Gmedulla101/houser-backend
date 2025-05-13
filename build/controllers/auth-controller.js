@@ -12,14 +12,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.googleLogout = exports.googleSuccess = exports.googleFailure = exports.login = exports.register = void 0;
+exports.confirmCodeResetPassword = exports.confirmEmailSendOTP = exports.googleLogout = exports.googleSuccess = exports.googleFailure = exports.login = exports.register = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const http_status_codes_1 = require("http-status-codes");
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const User_model_1 = __importDefault(require("../models/User-model"));
+const User_confirmation_1 = __importDefault(require("../models/User-confirmation"));
 const errors_1 = require("../errors");
+const nodemailer_transporter_1 = __importDefault(require("../utils/nodemailer-transporter"));
+const fg_pswd_info_1 = __importDefault(require("../utils/emails/fg-pswd-info"));
 dotenv_1.default.config();
 //ENSURING PRESENCE OF JWT SECRET
 const authSecret = process.env.JWT_SECRET;
@@ -119,5 +122,56 @@ exports.googleLogout = (0, express_async_handler_1.default)((req, res) => __awai
             success: true,
             msg: 'Logged out',
         });
+    });
+}));
+//CONFIRMING EMAIL TO SEND THE RESET CODE
+exports.confirmEmailSendOTP = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email } = req.body;
+    if (!email) {
+        throw new errors_1.BadRequestError('Please fill in all the fields');
+    }
+    const existingUser = yield User_model_1.default.findOne({ email });
+    if (!existingUser) {
+        throw new errors_1.NotFoundError('The requested user does not exist');
+    }
+    const randomNumber = Math.floor(100000 + Math.random() * 900000);
+    const newEmailInfo = (0, fg_pswd_info_1.default)(existingUser.email, randomNumber);
+    //IF THE USER CONFIRMATION ROW ALREADY EXISTS, IT WILL BE UPDATED ACCORDINGLY
+    yield User_confirmation_1.default.findOneAndUpdate({
+        userEmail: email,
+    }, { $set: { confirmationCode: randomNumber } }, { upsert: true });
+    nodemailer_transporter_1.default.sendMail(newEmailInfo, (error, info) => {
+        if (error) {
+            throw new errors_1.BadRequestError(`Error sending email: ${JSON.stringify(error)}`);
+        }
+        else {
+            res.status(http_status_codes_1.StatusCodes.OK).json({
+                success: true,
+                msg: 'Email confirmed, confirmation code sent',
+                response: info.response,
+                userId: existingUser.id,
+            });
+        }
+    });
+}));
+exports.confirmCodeResetPassword = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { code, email, password } = req.body;
+    const userConfirmation = yield User_confirmation_1.default.findOne({
+        userEmail: email,
+    });
+    if (!userConfirmation) {
+        throw new errors_1.BadRequestError('This user has not requested for a password reset');
+    }
+    //CHECKING THE CONFIRMATION CODE
+    if (userConfirmation.confirmationCode !== Number(code)) {
+        throw new errors_1.BadRequestError('The entered code is incorrect. Try again');
+    }
+    //ENCRYPTING THE PASSWORD
+    const hashedSalt = yield bcryptjs_1.default.genSalt(10);
+    const hashedPassword = yield bcryptjs_1.default.hash(password, hashedSalt);
+    yield User_model_1.default.findOneAndUpdate({ email }, { password: hashedPassword });
+    res.status(http_status_codes_1.StatusCodes.OK).json({
+        success: true,
+        msg: 'Password reset succesful, proceeed to login',
     });
 }));
