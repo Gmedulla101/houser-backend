@@ -8,6 +8,6 @@ import {
 const paymentsRouter = Router();
 
 paymentsRouter.post('/initialize-payment', initializePayment);
-paymentsRouter.get('/verify-payment', verifyPayment);
+paymentsRouter.get('/verify-payment/:trxref', verifyPayment);
 
 export default paymentsRouter;
