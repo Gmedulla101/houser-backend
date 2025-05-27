@@ -49,9 +49,8 @@ const PropertiesSchema = new mongoose.Schema(
       ]
     }, */
     createdBy: {
-      type: mongoose.Types.ObjectId,
-      ref: 'user',
-      required: [true, 'Please provide user token'],
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users',
     },
   },
   { timestamps: true }

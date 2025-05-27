@@ -7,6 +7,7 @@ interface ModifiedErr extends Error {
   value: any;
   code: any;
   keyValue: any;
+  response: any;
 }
 
 const errorHandlerMiddleware = (
@@ -42,6 +43,12 @@ const errorHandlerMiddleware = (
     customError.statusCode = 400;
   }
 
+  //FOR PAYMENTS: DUPLICATE TRANSACTION REFERENCE
+  if (err.response.data.code === 'duplicate_reference') {
+    customError.msg =
+      'The transaction reference for this transaction already exists';
+    customError.statusCode = 400;
+  }
   // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ err });
   res.status(customError.statusCode).json({ msg: customError.msg });
   return;
