@@ -44,7 +44,7 @@ const errorHandlerMiddleware = (
   }
 
   //FOR PAYMENTS: DUPLICATE TRANSACTION REFERENCE
-  if (err.response.data.code === 'duplicate_reference') {
+  if (err?.response?.data?.code === 'duplicate_reference') {
     customError.msg =
       'The transaction reference for this transaction already exists';
     customError.statusCode = 400;
