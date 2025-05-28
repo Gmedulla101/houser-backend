@@ -2,6 +2,9 @@ import userModel from '../models/User-model';
 import jwt from 'jsonwebtoken';
 import passportStrategy from 'passport-google-oauth2';
 import passport from 'passport';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const GoogleStrategy = passportStrategy.Strategy;
 
