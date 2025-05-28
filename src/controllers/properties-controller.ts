@@ -108,7 +108,7 @@ const getFeaturedProps = asyncHandler(async (req: Request, res: Response) => {
 //GETTING SINGLE PROPERTY
 const getProp = asyncHandler(async (req: Request, res: Response) => {
   const _id = req.params.id;
-  const prop = await propertyModel.findOne({ _id }).populate('createdBy');
+  const prop = await propertyModel.findOne({ _id });
   res.status(StatusCodes.OK).json({ success: true, data: prop });
 });
 
