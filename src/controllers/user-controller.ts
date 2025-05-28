@@ -42,3 +42,42 @@ export const checkUser = asyncHandler(
     res.status(StatusCodes.OK).json({ success: true, data: 'proceed' });
   }
 );
+
+export const updateUser = asyncHandler(
+  async (req: ModifiedRequest, res: Response) => {
+    const { userId } = req.params;
+    const { username, email, phoneNumber, fullName } = req.body.editData;
+
+    type UpdateObject = {
+      username?: string;
+      email?: string;
+      phoneNumber?: number;
+      fullName?: string;
+    };
+
+    const updateObject: UpdateObject = {};
+
+    if (username) {
+      updateObject.username = username;
+    }
+
+    if (email) {
+      updateObject.email = email;
+    }
+
+    if (phoneNumber) {
+      updateObject.phoneNumber = phoneNumber;
+    }
+
+    if (fullName) {
+      updateObject.fullName = fullName;
+    }
+
+    await userModel.findOneAndUpdate({ _id: userId }, updateObject);
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      msg: 'User data updated successfully',
+    });
+  }
+);
