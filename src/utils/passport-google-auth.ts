@@ -11,6 +11,10 @@ const GoogleStrategy = passportStrategy.Strategy;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 
+if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
+  throw new Error('Neccessary google credentials are missing');
+}
+
 passport.use(
   'google',
   new GoogleStrategy(
@@ -21,7 +25,13 @@ passport.use(
         'https://houser-backend.onrender.com/api/v1/auth/google/callback',
       passReqToCallback: true,
     },
-    async function (request, accessToken, refreshToken, profile, done) {
+    async function (
+      request: any,
+      accessToken: any,
+      refreshToken: any,
+      profile: any,
+      done: any
+    ) {
       const userDetails = {
         username: profile.email,
         fullName: `${profile.given_name} ${profile.famiy_name}`,
@@ -46,7 +56,7 @@ passport.use(
 
       const token = jwt.sign(
         { userId: user._id, username: user.username, email: user.email },
-        process.env.JWT_SECRET,
+        process.env.JWT_SECRET!,
         { expiresIn: '15d' }
       );
 
@@ -59,6 +69,6 @@ passport.serializeUser((user, done) => {
   done(null, user);
 });
 
-passport.deserializeUser((user, done) => {
+passport.deserializeUser((user: any, done) => {
   done(null, user);
 });

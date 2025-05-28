@@ -87,11 +87,13 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const user = await userModel.findOne({ email });
+
   if (!user) {
     throw new UnauthenticatedError("User doesn't exist!");
   }
+  
 
-  const isPasswordCorrect = await bcrypt.compare(password, user.password);
+  const isPasswordCorrect = await bcrypt.compare(password, user?.password!);
 
   if (!isPasswordCorrect) {
     throw new UnauthenticatedError('Password is not correct');

@@ -4,9 +4,9 @@ import { Request, Response, NextFunction } from 'express';
 
 export interface ModifiedRequest extends Request {
   user?: {
-    username: string;
-    email: string;
-    userId: string;
+    username?: string;
+    email?: string;
+    userId?: string;
   };
 }
 

@@ -1,14 +1,13 @@
 import asycnHandler from 'express-async-handler';
 import axios from 'axios';
-import { Response } from 'express';
-import { ModifiedRequest } from '../middleware/auth-middleware';
+import { Response, Request } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
 import { BadRequestError } from '../errors';
 import propertyModel from '../models/Properties-model';
 
 export const initializePayment = asycnHandler(
-  async (req: ModifiedRequest, res: Response) => {
+  async (req: Request, res: Response) => {
     const { email, amount, propertyId } = req.body;
     const sercret_key = process.env.PAYSTACK_SECRET_KEY;
 
@@ -47,7 +46,7 @@ export const initializePayment = asycnHandler(
 );
 
 export const verifyPayment = asycnHandler(
-  async (req: ModifiedRequest, res: Response) => {
+  async (req: Request, res: Response) => {
     const { trxref } = req.params;
     const sercret_key = process.env.PAYSTACK_SECRET_KEY;
 
