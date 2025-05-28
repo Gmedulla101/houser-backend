@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import passport from 'passport';
 import session from 'express-session';
+import MongoStore from 'connect-mongo';
 import './utils/passport-google-auth';
 
 import connectDB from './db/connectDB';
@@ -27,6 +28,14 @@ app.use(
     secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI,
+      collectionName: 'sessions',
+    }),
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24,
+      secure: true,
+    },
   })
 );
 app.use(passport.initialize());
