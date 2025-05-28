@@ -52,9 +52,8 @@ const PropertiesSchema = new mongoose_1.default.Schema({
       ]
     }, */
     createdBy: {
-        type: mongoose_1.default.Types.ObjectId,
-        ref: 'user',
-        required: [true, 'Please provide user token'],
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: 'users',
     },
 }, { timestamps: true });
 const propertyModel = mongoose_1.default.model('properties', PropertiesSchema);

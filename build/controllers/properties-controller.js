@@ -112,7 +112,7 @@ exports.getFeaturedProps = getFeaturedProps;
 //GETTING SINGLE PROPERTY
 const getProp = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const _id = req.params.id;
-    const prop = yield Properties_model_1.default.findOne({ _id });
+    const prop = yield Properties_model_1.default.findOne({ _id }).populate('createdBy');
     res.status(http_status_codes_1.StatusCodes.OK).json({ success: true, data: prop });
 }));
 exports.getProp = getProp;

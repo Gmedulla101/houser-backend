@@ -23,6 +23,12 @@ const errorHandlerMiddleware = (err, req, res, next) => {
         customError.msg = `Duplicate value entered for ${Object.keys(err.keyValue)} field: Email already exists`;
         customError.statusCode = 400;
     }
+    //FOR PAYMENTS: DUPLICATE TRANSACTION REFERENCE
+    if (err.response.data.code === 'duplicate_reference') {
+        customError.msg =
+            'The transaction reference for this transaction already exists';
+        customError.statusCode = 400;
+    }
     // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ err });
     res.status(customError.statusCode).json({ msg: customError.msg });
     return;

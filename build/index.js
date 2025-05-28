@@ -59,6 +59,7 @@ const error_handler_1 = __importDefault(require("./middleware/error-handler"));
 const user_route_1 = __importDefault(require("./routes/user-route"));
 const properties_route_1 = __importDefault(require("./routes/properties-route"));
 const auth_route_1 = __importDefault(require("./routes/auth-route"));
+const payment_route_1 = __importDefault(require("./routes/payment-route"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const sessionSecret = process.env.SESSION_SECRET;
@@ -87,6 +88,7 @@ app.use((0, cors_1.default)({
 app.use('/api/v1/user', user_route_1.default);
 app.use('/api/v1/properties', properties_route_1.default);
 app.use('/api/v1/auth', auth_route_1.default);
+app.use('/api/v1/payments', payment_route_1.default);
 //ERROR MIDDLEWARE
 app.use(not_found_1.default);
 app.use(error_handler_1.default);
