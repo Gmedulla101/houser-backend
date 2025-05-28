@@ -9,7 +9,7 @@ export const getUser = asyncHandler(
   async (req: ModifiedRequest, res: Response) => {
     const { userId } = req.params;
 
-    const user = await userModel.find({ _id: userId });
+    const user = await userModel.find({ _id: userId }).select('-password');
 
     if (!user) {
       throw new BadRequestError('This user does not exist');

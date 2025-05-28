@@ -64,8 +64,6 @@ export const verifyPayment = asycnHandler(
       }
     );
 
-    console.log(response);
-
     res.status(StatusCodes.OK).json({
       success: true,
       msg: 'Transaction verified successfully',
