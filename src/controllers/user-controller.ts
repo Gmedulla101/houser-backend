@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import asyncHandler from 'express-async-handler';
 import { Response, Request } from 'express';
 import { ModifiedRequest } from '../middleware/auth-middleware';
-import { BadRequestError } from '../errors';
+import { BadRequestError, UnauthenticatedError } from '../errors';
 
 export const getUser = asyncHandler(async (req: Request, res: Response) => {
   const { userId } = req.params;
@@ -75,3 +75,26 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
     msg: 'User data updated successfully',
   });
 });
+
+export const getUserProfile = asyncHandler(
+  async (req: ModifiedRequest, res: Response) => {
+    if (!req.user) {
+      throw new UnauthenticatedError('Error: No user logged in to access JWT');
+    }
+
+    const { userId } = req.user;
+
+    const user = await userModel.findOne({ _id: userId });
+
+    if (!user) {
+      throw new BadRequestError(
+        'The requested user does not exist, please create an account'
+      );
+    }
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      data: user,
+    });
+  }
+);

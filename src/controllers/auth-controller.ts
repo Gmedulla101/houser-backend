@@ -91,7 +91,6 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   if (!user) {
     throw new UnauthenticatedError("User doesn't exist!");
   }
-  
 
   const isPasswordCorrect = await bcrypt.compare(password, user?.password!);
 
@@ -133,11 +132,10 @@ export const googleSuccess = asyncHandler(
     }
 
     //RECEIVING THE TOKEN DIRECTLY AFTER VERIFYING USER PRESCENCE IN DATABSE IN THE PASSPORT JS UTILITY
+
     const token = req.user;
 
-    res.redirect(
-      `https://houser-navy.vercel.app/google-success/token?token=${token}`
-    );
+    res.redirect(`http://localhost:5173/google-success/token?token=${token}`);
   }
 );
 

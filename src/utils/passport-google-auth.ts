@@ -21,8 +21,7 @@ passport.use(
     {
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL:
-        'https://houser-backend.onrender.com/api/v1/auth/google/callback',
+      callbackURL: 'http://localhost:5000/api/v1/auth/google/callback',
       passReqToCallback: true,
     },
     async function (
@@ -34,7 +33,7 @@ passport.use(
     ) {
       const userDetails = {
         username: profile.email,
-        fullName: `${profile.given_name} ${profile.famiy_name}`,
+        fullName: `${profile.given_name} ${profile.family_name}`,
         email: profile.email,
         role: 'hunter',
         profilePic: profile.picture,

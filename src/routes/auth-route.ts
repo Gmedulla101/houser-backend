@@ -20,6 +20,7 @@ authRouter.get(
   '/google-working',
   passport.authenticate('google', { scope: ['email', 'profile'] })
 );
+
 authRouter.get(
   '/google/callback',
   passport.authenticate('google', {
