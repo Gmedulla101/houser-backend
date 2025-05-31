@@ -14,6 +14,7 @@ import { Response, Request } from 'express';
 import transporter from '../utils/nodemailer-transporter';
 
 import generateForgotPasswordEmail from '../utils/emails/fg-pswd-info';
+import { ModifiedRequest } from '../middleware/auth-middleware';
 dotenv.config();
 
 type UserDetails = {
@@ -126,16 +127,19 @@ export const googleFailure = asyncHandler(
 );
 
 export const googleSuccess = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: ModifiedRequest, res: Response) => {
     if (!req.user) {
       res.status(StatusCodes.UNAUTHORIZED).json({ msg: 'Unauthorised' });
     }
 
+    const { email } = req.user?.userDetails;
+    const token = req.user?.token;
+
     //RECEIVING THE TOKEN DIRECTLY AFTER VERIFYING USER PRESCENCE IN DATABSE IN THE PASSPORT JS UTILITY
 
-    const token = req.user;
-
-    res.redirect(`http://localhost:5173/google-success/token?token=${token}`);
+    res.redirect(
+      `https://houser-navy.vercel.app/google-success/token?token=${token}&email=${email}`
+    );
   }
 );
 

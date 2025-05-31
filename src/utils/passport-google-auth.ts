@@ -60,7 +60,7 @@ passport.use(
         { expiresIn: '15d' }
       );
 
-      return done(null, token);
+      return done(null, { token, userDetails });
     }
   )
 );

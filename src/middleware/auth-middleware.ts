@@ -7,6 +7,8 @@ export interface ModifiedRequest extends Request {
     username?: string;
     email?: string;
     userId?: string;
+    userDetails?: any;
+    token?: string;
   };
 }
 
@@ -24,6 +26,7 @@ const auth = (req: ModifiedRequest, res: Response, next: NextFunction) => {
       throw new Error('Problems in the env file, type: jsonwebtoken');
     }
     const payload: any = jwt.verify(token, authSecret);
+
     req.user = {
       username: payload.username,
       email: payload.email,
